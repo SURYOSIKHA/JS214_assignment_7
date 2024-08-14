@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Slideshow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 80%;
+            max-width: 600px;
+            height: 400px;
+            background-color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .slideshow-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .slideshow-container img.active {
+            display: block;
+        }
+
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .controls input[type="text"] {
+            padding: 10px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .controls button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .controls button:hover {
+            opacity: 0.8;
+        }
+
+        .navigation {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .navigation button {
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .navigation button:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <img src="https://via.placeholder.com/600x400/0000FF/808080?text=Image+1" class="active" alt="Image 1">
+        <img src="https://via.placeholder.com/600x400/FF0000/FFFFFF?text=Image+2" alt="Image 2">
+        <img src="https://via.placeholder.com/600x400/00FF00/000000?text=Image+3" alt="Image 3">
+        <div class="navigation">
+            <button id="prevBtn">&#10094; Prev</button>
+            <button id="nextBtn">Next &#10095;</button>
+        </div>
+    </div>
+    <div class="controls">
+        <input type="text" id="imageUrl" placeholder="Enter image URL">
+        <input type="text" id="imageIndex" placeholder="Enter position index">
+        <button id="addImageBtn">Add Image</button>
+        <button id="playPauseBtn">Pause</button>
+    </div>
+
+    <script>
+        let images = document.querySelectorAll('.slideshow-container img');
+        let currentIndex = 0;
+        let intervalId = setInterval(nextImage, 2000);
+        let isPlaying = true;
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const addImageBtn = document.getElementById('addImageBtn');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+
+        prevBtn.addEventListener('click', prevImage);
+        nextBtn.addEventListener('click', nextImage);
+        addImageBtn.addEventListener('click', addImage);
+        playPauseBtn.addEventListener('click', togglePlayPause);
+
+        function nextImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        function prevImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        function addImage() {
+            const imageUrl = document.getElementById('imageUrl').value;
+            const imageIndex = parseInt(document.getElementById('imageIndex').value, 10);
+
+            if (imageUrl && imageIndex >= 0 && imageIndex <= images.length) {
+                const newImage = document.createElement('img');
+                newImage.src = imageUrl;
+                newImage.alt = `Image ${images.length + 1}`;
+                document.querySelector('.slideshow-container').insertBefore(newImage, images[imageIndex]);
+                images = document.querySelectorAll('.slideshow-container img');
+            } else {
+                alert('Invalid image URL or index.');
+            }
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                clearInterval(intervalId);
+                playPauseBtn.textContent = 'Play';
+            } else {
+                intervalId = setInterval(nextImage, 2000);
+                playPauseBtn.textContent = 'Pause';
+            }
+            isPlaying = !isPlaying;
+        }
+    </script>
+</body>
+</html>
